@@ -61,9 +61,7 @@ t_LT = r'\<'
 t_LTEQ = r'\<\='
 t_GT = r'\>'
 t_GTEQ = r'\>\='
-
 t_EOF = r'\0'
-
 
 
 # Token que precisa de alguma ação
@@ -78,20 +76,19 @@ def t_STRING(t):
     return t
 
 def t_IDENT(t):
-    r'\w+'        
-    if t.value in reserved:        
-        pass
-    else:
-        t.values = str(t.value)
-    return t
+	r'\w+'
+	if t.value in reserved:
+		t.type = reserved[ t.value ]
+	return t
 
 
 
 
 # Contabiliza nova linha
-def t_newline(t):
-    r'\n+'
-    t.lexer.lineno += len(t.value)
+def t_NEWLINE(t):
+	r'\n+'
+	t.lexer.lineno += len(t.value)
+	return t
 
 # Error handling rule
 def t_error(t):
@@ -103,19 +100,11 @@ t_ignore_COMMENT = r'\#.*'
 # ignora espaço e tab
 t_ignore  = ' \t'
 
-data = '''
-#comentario
-LABEL
-variavel =  "isso eh pra  ser uma string"
-21 / 4 * 10
-   + -20 *2
- '''
+def getToken(data):
+	lexer = lex.lex()
+	lexer.input(data)
 
-lexer = lex.lex()
-lexer.input(data)
+	tok = lexer.token()
 
-while True:
-     tok = lexer.token()
-     if not tok: 
-         break      # No more input
-     print(tok)
+	return tok.type
+
